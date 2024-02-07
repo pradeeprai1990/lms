@@ -2,6 +2,7 @@ let express=require("express");
 var cors = require('cors')
 const webRoutes = require("./App/routers");
 let app=express();
+app.use("/uploads/course",express.static('uploads/course'));
 
 app.use(cors())
 

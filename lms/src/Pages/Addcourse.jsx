@@ -6,9 +6,12 @@ import Footer from '../Common/Footer'
 import { mainContext } from '../Context'
 import prev from '../img/generic-image-file-icon-hi.png'
 import axios, { toFormData } from 'axios'
+import { useNavigate } from 'react-router'
 // import AdminForms from '../Common/AdminForms'
 
 function Addcourse() {
+
+  let navigator=useNavigate();
   let {changemenu} = useContext(mainContext);
   let [status,setStatus]=useState(true)
 
@@ -28,6 +31,10 @@ function Addcourse() {
     .then((res)=>res.data)
     .then((finalRes)=>{
       console.log(finalRes)
+      setTimeout(()=>{
+        navigator('/viewcourse')
+      },3000)
+     
     })
 
     event.preventDefault();

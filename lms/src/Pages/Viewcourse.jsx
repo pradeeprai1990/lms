@@ -1,11 +1,24 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { mainContext } from '../Context';
 import Header from '../Common/Header';
 import Sidebar from '../Common/Sidebar';
 import Footer from '../Common/Footer';
+import axios from 'axios';
 
 function Viewcourse() {
   let {changemenu} = useContext(mainContext);
+  let [finalCourse,setfinalCourse]=useState([])
+  let [courseImgUrl,setcourseImgUrl]=useState('')
+
+  useEffect(()=>{
+    axios.get('http://localhost:8000/course/view-course')
+    .then((res)=>res.data)
+    .then((finalRes)=>{
+       setfinalCourse(finalRes.finalCourse)
+       setcourseImgUrl(finalRes.courseImgUrl)
+    })
+  })
+
   return (
     <div>
 
@@ -32,22 +45,39 @@ function Viewcourse() {
               <th>Status</th>
               <th>Action</th>
             </tr>
+            {finalCourse.length>=1
+
+              ?
+              finalCourse.map((courseItems,index)=>{
+                return(
+                  <tr>
+                      <td>1</td>
+                      <td>{courseItems.courseName}</td>
+                      <td>{courseItems.coursePrice}</td>
+                      <td>{courseItems.coursesDuration}</td>
+                      <td>{courseItems.coursesDescription}</td>
+                      <td>
+                        <img src={courseImgUrl+courseItems.courseImage} width={50} />
+                      </td>
+                      <td>1</td>
+                      <td className='text-center'>
+
+                      <button className='bg-green-500 text-white px-5 mr-5 py-1'>Edit</button>
+                      <button className='bg-red-400 text-white px-5 py-1'>Delete</button>
+
+
+                     </td>
+                </tr>
+                )
+              })
+              
+            :
             <tr>
-              <td>1</td>
-              <td>React</td>
-              <td>20000</td>
-              <td>1 month</td>
-              <td>This is new React Course</td>
-              <td>React.png</td>
-              <td>1</td>
-              <td className='text-center'>
+                <td colSpan={8}>no data found</td>
+          </tr>
 
-              <button className='bg-green-500 text-white px-5 mr-5 py-1'>Edit</button>
-              <button className='bg-red-400 text-white px-5 py-1'>Delete</button>
-
-
-              </td>
-            </tr>
+            }
+           
           </table>
         </div>
         </div>
