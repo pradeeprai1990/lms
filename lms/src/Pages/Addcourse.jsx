@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../Common/Header'
 import Sidebar from '../Common/Sidebar'
 import DashboardItems from '../Common/DashboardItems'
@@ -6,17 +6,49 @@ import Footer from '../Common/Footer'
 import { mainContext } from '../Context'
 import prev from '../img/generic-image-file-icon-hi.png'
 import axios, { toFormData } from 'axios'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 // import AdminForms from '../Common/AdminForms'
 
 function Addcourse() {
+  let params=useParams()
+  let [formValue,setValue]=useState({
+    courseName:'',
+    coursePrice:'',
+    coursesDuration:'',
+    coursesDescription:'',
+    courseImage:'',
+    status:1
 
+  })
+   
+  useEffect(()=>{
+    setValue({
+      courseName:'',
+      coursePrice:'',
+      coursesDuration:'',
+      coursesDescription:'',
+      courseImage:'',
+      status:1
+    })
+    if(params.id!=="" && params.id!==undefined){
+
+      axios.get(`http://localhost:8000/course/edit-course/${params.id}`)
+      .then((res)=>res.data)
+      .then((finalRes)=>{
+        console.log(finalRes)
+        setValue(finalRes)
+        //  setfinalCourse(finalRes.finalCourse)
+        //  setcourseImgUrl(finalRes.courseImgUrl)
+      })
+  }
+  
+  },[params.id])
   let navigator=useNavigate();
   let {changemenu} = useContext(mainContext);
   let [status,setStatus]=useState(true)
 
   let addCourse=(event)=>{
-
+   
     let AllFormData=new FormData(event.target)
 
     // let courseObj={
@@ -27,7 +59,7 @@ function Addcourse() {
     //   courseImage:event.target.courseImg,
     //   courseStatus:status,
     // }
-    axios.post('http://localhost:8000/course/add-course',AllFormData)
+    axios.post(`http://localhost:8000/course/add-course/?id=${params.id ?? '' }`,AllFormData)
     .then((res)=>res.data)
     .then((finalRes)=>{
       console.log(finalRes)
@@ -57,13 +89,45 @@ function Addcourse() {
           <div className='bg-white w-[100%] mb-[50px] p-4 h-full rounded-[20px]'>
           <form action="" onSubmit={addCourse}>
             Courses Name
-            <input type="text" name='courseName' className='border px-4 border-gray-400 w-full h-[50px] mb-3 mt-2 '  />
+            <input type="text" 
+            onChange={(e)=>{
+              let obj={...formValue};
+              obj['courseName']=e.target.value;
+              setValue(obj)
+            }}
+            
+            value={formValue.courseName} name='courseName' className='border px-4 border-gray-400 w-full h-[50px] mb-3 mt-2 '  />
             Courses Price
-            <input type="text" name='coursePrice' className='border px-4 border-gray-400 w-full h-[50px] mb-3 mt-2 '  />
+            <input
+             onChange={(e)=>{
+              let obj={...formValue};
+              obj['coursePrice']=e.target.value;
+              setValue(obj)
+            }}
+            value={formValue.coursePrice}
+            type="text" name='coursePrice' className='border px-4 border-gray-400 w-full h-[50px] mb-3 mt-2 '  />
             Courses Duration
-            <input type="text" name='coursesDuration' className='border px-4 border-gray-400 w-full h-[50px] mb-3 mt-2 '  />
+            <input type="text"
+            onChange={(e)=>{
+              let obj={...formValue};
+              obj['coursesDuration']=e.target.value;
+              setValue(obj)
+            }}
+            
+            value={formValue.coursesDuration}
+            name='coursesDuration' className='border px-4 border-gray-400 w-full h-[50px] mb-3 mt-2 '  />
             Courses Description
-            <textarea name="coursesDescription" id="" className='border px-4 pt-3 border-gray-400 my-2 w-full h-[100px]' cols="30" rows="10"></textarea>
+            <textarea
+            onChange={(e)=>{
+              let obj={...formValue};
+              
+              obj['coursesDescription']=e.target.value;
+              setValue(obj)
+
+            }}
+            
+            value={formValue.coursesDescription}
+            name="coursesDescription" id="" className='border px-4 pt-3 border-gray-400 my-2 w-full h-[100px]' cols="30" rows="10"></textarea>
             <input type="file" name='courseImg' id='file-input' className='border hidden border-gray-400 w-full h-[50px] mb-3 mt-2 '/>
             <div className='flex items-center gap-0 mt-[80px]'>
               <div className='w-full flex items-center'>
@@ -76,8 +140,27 @@ function Addcourse() {
             </div>
             Courses Stauts
             <div className='flex items-center mt-5  mb-8 gap-2'>
-            <input type="radio" value={1} checked={status} onChange={()=>setStatus(true)} name='status' className='mx-2 w-[20px] h-[20px] text-[20px]'  /> Active
-            <input type="radio" value={0} onChange={()=>setStatus(false)}  name='status' className='mx-2 w-[20px] h-[20px] text-[20px]'  /> Deactive
+            <input
+             type="radio" value={formValue.status} 
+             onChange={(e)=>{
+              let obj={...formValue};
+              obj['status']=1;
+              setValue(obj)
+             }}
+            
+             checked={formValue.status==1 ? true : false }
+             
+             name='status' className='mx-2 w-[20px] h-[20px] text-[20px]'  /> Active
+            <input type="radio" value={formValue.status}
+            
+            name='status' className='mx-2 w-[20px] h-[20px] text-[20px]'
+            onChange={(e)=>{
+              let obj={...formValue};
+              obj['status']=0;
+              setValue(obj)
+             }}
+             checked={formValue.status==0 ? true : false }
+            /> Deactive
             </div>
             
             <input type="submit" className='bg-[#4B49AC] mb-8 mt-7 text-[18px] px-8 py-2 rounded-[10px] text-white' />

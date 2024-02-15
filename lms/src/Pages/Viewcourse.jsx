@@ -4,6 +4,7 @@ import Header from '../Common/Header';
 import Sidebar from '../Common/Sidebar';
 import Footer from '../Common/Footer';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function Viewcourse() {
   let {changemenu} = useContext(mainContext);
@@ -17,7 +18,7 @@ function Viewcourse() {
        setfinalCourse(finalRes.finalCourse)
        setcourseImgUrl(finalRes.courseImgUrl)
     })
-  })
+  },[])
 
   return (
     <div>
@@ -62,7 +63,9 @@ function Viewcourse() {
                       <td>1</td>
                       <td className='text-center'>
 
+                      <Link to={`/addcourse/${courseItems._id}`}>
                       <button className='bg-green-500 text-white px-5 mr-5 py-1'>Edit</button>
+                      </Link>
                       <button className='bg-red-400 text-white px-5 py-1'>Delete</button>
 
 
